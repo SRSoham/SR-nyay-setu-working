@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Nyay Saarthi — Digital Judiciary Platform for India" width="100%" />
+  <img src="assets/banner.png" alt="Nyay Setu — Digital Judiciary Platform for India" width="100%" />
 </p>
 
 <p align="center">
@@ -28,17 +28,16 @@
 
 > **Mission Statement**
 >
-> India has over 50 million pending court cases. Millions of citizens cannot afford legal counsel. Nyay Saarthi bridges this gap by putting an AI-powered legal assistant, end-to-end case management, and secure virtual courts in the hands of every Indian — entirely free of charge.
+> India has over 50 million pending court cases. Millions of citizens cannot afford legal counsel. Nyay Setu bridges this gap by putting an AI-powered legal assistant, end-to-end case management, and secure virtual courts in the hands of every Indian — entirely free of charge.
 
 <hr/>
 
-# Table of Contents
+## Table of Contents
 
-- [Why Nyay Saarthi?](#why-nyay-saarthi)
+- [Why Nyay Setu?](#why-nyay-setu)
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
 - [Quick Start](#quick-start)
-- [Google OAuth2 Authentication Setup](#google-oauth2-authentication-setup)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
 - [Contributors](#contributors)
@@ -46,7 +45,7 @@
 
 <hr/>
 
-# Why Nyay Saarthi?
+## Why Nyay Saarthi?
 
 The Indian judiciary faces a systemic crisis that affects hundreds of millions of citizens:
 
@@ -56,74 +55,36 @@ The Indian judiciary faces a systemic crisis that affects hundreds of millions o
 | Average time to resolve a civil case | **10–15 Years** |
 | Citizens unable to afford legal representation | **Hundreds of Millions** |
 
-Nyay Saarthi is built to address this directly. The platform removes the three biggest barriers to legal access — cost, complexity, and distance — by digitizing the entire judiciary workflow and placing an AI legal assistant at every citizen's fingertips.
+Nyay Setu is built to address this directly. The platform removes the three biggest barriers to legal access — cost, complexity, and distance — by digitizing the entire judiciary workflow and placing an AI legal assistant at every citizen's fingertips.
 
 <hr/>
 
 # Key Features
 
-## AI Legal Assistant (Vakil Friend)
-
+**AI Legal Assistant (Vakil Friend)**
 A conversational AI companion powered by Groq's Llama 3.1 that helps citizens understand their legal rights, navigate case filings, review documents, and get real-time answers in plain, accessible language.
 
----
+**Role-Based Dashboards**
+Secure, tailored portals for every user type in the legal ecosystem: Litigants, Lawyers, Judges, Police, and Administrators — each with a workflow designed around their specific responsibilities.
 
-## Role-Based Dashboards
+**End-to-End Case Management**
+Full case lifecycle support from initial filing to final order, including a case diary, hearing timelines, document management, and status tracking.
 
-Secure, tailored portals for every user type in the legal ecosystem:
-- Litigants
-- Lawyers
-- Judges
-- Police
-- Administrators
+**Evidence Vault**
+Structured digital evidence uploads with SHA-256 hash verification, creating a tamper-proof and legally admissible record for every case.
 
-Each dashboard is designed around its specific workflow and responsibilities.
+**Digital FIR Handling**
+Police can upload FIRs digitally. The AI instantly generates a structured summary and draft charge sheet, significantly reducing manual paperwork and processing time.
 
----
+**Virtual Courtrooms**
+Native WebRTC-based video conferencing integrated directly into the case timeline for secure, seamless remote hearings — no third-party applications required.
 
-## End-to-End Case Management
-
-Full case lifecycle support from:
-- Initial filing
-- Hearing management
-- Evidence uploads
-- Timeline tracking
-- Final orders
-
----
-
-## Evidence Vault
-
-Structured digital evidence uploads with SHA-256 hash verification, creating tamper-proof and legally admissible records.
-
----
-
-## Digital FIR Handling
-
-Police can upload FIRs digitally. AI automatically generates:
-- FIR summaries
-- Draft charge sheets
-- Structured legal analysis
-
----
-
-## Virtual Courtrooms
-
-Native WebRTC-based secure virtual hearings integrated directly into the platform.
-
----
-
-## Secure Authentication
-
-JWT-based stateless authentication using Spring Security with:
-- Role-based access control
-- Request filtering
-- Google OAuth2 SSO authentication
-- Secure JWT issuance after OAuth login
+**Secure Authentication**
+JWT-based stateless authentication with Spring Security, role-based access control, and multi-layer request filtering.
 
 <hr/>
 
-# Tech Stack
+## Tech Stack
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
@@ -142,7 +103,7 @@ JWT-based stateless authentication using Spring Security with:
 
 <hr/>
 
-# Quick Start
+## Frontend Environment Setup
 
 For complete setup instructions, environment configuration, and Docker deployment details, refer to the **[Detailed Setup Guide](./docs/setup.md)**.
 
@@ -154,139 +115,41 @@ At a high level, the platform consists of three services that need to run concur
 | Backend | `backend/nyaysetu-backend/` | `mvn spring-boot:run` |
 | NLP Orchestrator | `nlp-orchestrator/` | `uvicorn main:app --reload` |
 
----
+> **Prerequisites:** Node.js >= 20, Java 17, Maven 3.9+, PostgreSQL 15+, Python 3.12+
 
-## Prerequisites
-
-Before running the project, ensure the following are installed:
-
-- Node.js >= 20
-- Java 17
-- Maven 3.9+
-- PostgreSQL 15+
-- Python 3.12+
-
----
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in your own values.
-
-Example:
-
-```bash
-cp .env.example .env
-```
+For environment variables, copy `.env.example` to `.env` and fill in your values. A full reference of all required variables is documented in the [Setup Guide](./docs/setup.md#environment-variables).
 
 <hr/>
 
-# Google OAuth2 Authentication Setup
-
-Nyay Saarthi supports secure Google Single Sign-On (SSO) authentication using Spring Security OAuth2 and JWT-based session management.
-
-Users can:
-- Continue with Google during login/signup
-- Automatically create accounts using Google identity
-- Receive Nyay Saarthi JWT authentication after successful login
-- Be redirected securely to their role-specific dashboard
-
 ---
 
-## Backend Environment Setup
+| Document | Description |
+|---|---|
+| [Setup Guide](./docs/setup.md) | Full database setup, environment variables, and Docker configuration |
+| [Architecture Overview](./docs/architecture/overview.md) | System design, component diagrams, and data flow |
+| [AI Integration Guide](./AI_INTEGRATION_GUIDE.md) | Groq API and NLP orchestrator technical deep-dive |
+| [API Documentation](./SYSTEM_DOCUMENTATION.md) | All REST endpoints with request and response specifications |
+| [Contributing Guidelines](./CONTRIBUTING.md) | Branching strategy, commit conventions, and PR workflow |
 
-Create a `.env` file inside:
+<hr/>
 
-```bash
-backend/nyaysetu-backend/
-```
+## Contributing
 
-Add:
+This project is part of **GSSoC (GirlScript Summer of Code) 2026**. Contributions are welcome from everyone, regardless of experience level.
 
-```env
-# Database Configuration
-DB_NAME=nyaysetu
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
+**Before opening a Pull Request:**
 
-# AI Service Keys
-GROQ_API_KEY=
-GOOGLE_GEMINI_API_KEY=
+| Requirement | Details |
+|---|---|
+| Read the guidelines | Review [CONTRIBUTING.md](./CONTRIBUTING.md) for our branching and commit conventions |
+| Link an issue | Every PR must reference the issue it closes (`Closes #123`) |
+| Include visuals | UI-affecting PRs must include screenshots or a screen recording |
+| Sync with main | Rebase or merge `main` into your branch before requesting review |
+| Pass all checks | CI checks for lint, tests, and build must all pass |
 
-# JWT Secret
-JWT_SECRET=
+Browse [open issues](https://github.com/viru0909-dev/nyay-setu-working/issues) and filter by `good first issue` to get started.
 
-# Frontend URL
-FRONTEND_URL=http://localhost:5173
-FRONTEND_ORIGIN=http://localhost:5173
-CORS_ALLOWED_ORIGINS=http://localhost:5173
-
-# Spring Profile
-SPRING_PROFILES_ACTIVE=dev
-
-# Google OAuth2 Credentials
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-```
-
----
-
-## Frontend Environment Setup
-
-Create a `.env` file inside:
-
-```bash
-frontend/nyaysetu-frontend/
-```
-
-Add:
-
-```env
-VITE_API_BASE_URL=http://localhost:8080
-VITE_GOOGLE_CLIENT_ID=
-```
-
----
-
-## Frontend .env.example
-
-Create:
-
-```bash
-frontend/nyaysetu-frontend/.env.example
-```
-
-Add:
-
-```env
-VITE_API_BASE_URL=http://localhost:8080
-VITE_GOOGLE_CLIENT_ID=
-```
-
----
-
-# Google Cloud Console Setup
-
-## Step 1 — Open Google Cloud Console
-
-Visit:
-
-```txt
-https://console.cloud.google.com/
-```
-
----
-
-## Step 2 — Create Project
-
-Create a new Google Cloud Project.
-
----
-
-## Step 3 — Enable APIs
-
-Enable:
-- Google Identity Services
-- OAuth APIs
+<hr/>
 
 ---
 
@@ -298,140 +161,25 @@ Go to:
 APIs & Services → Credentials
 ```
 
-Create:
-- OAuth Client ID
-
-Application type:
-- Web Application
-
----
-
-## Step 5 — Add Authorized Redirect URI
-
-Add:
-
-```txt
-http://localhost:8080/login/oauth2/code/google
-```
-
----
-
-## Step 6 — Add Authorized JavaScript Origin
-
-Add:
-
-```txt
-http://localhost:5173
-```
-
----
-
-## Step 7 — Copy Credentials
-
-Copy:
-- Client ID
-- Client Secret
-
-Paste them into backend `.env`
-
----
-
-# OAuth Login Flow
-
-1. User clicks **Continue with Google**
-2. Frontend redirects to Spring Security OAuth endpoint
-3. Google authenticates the user
-4. Backend:
-   - validates Google identity
-   - checks existing account
-   - creates account if needed
-   - links Google account
-   - generates internal JWT
-5. Frontend stores JWT securely
-6. User is redirected to dashboard
-
----
-
-# Supported Authentication Providers
-
-| Provider | Status |
-|---|---|
-| Email/Password | ✅ Supported |
-| Google OAuth2 | ✅ Supported |
-
----
-
-# Security Notes
-
-- OAuth users are stored with:
-  - `auth_provider=GOOGLE`
-  - unique `provider_id`
-- Password field is nullable for OAuth users
-- Existing email/password authentication remains fully functional
-- JWT authentication is still used internally after OAuth login
-
-<hr/>
-
-# Documentation
-
-| Document | Description |
-|---|---|
-| [Setup Guide](./docs/setup.md) | Full database setup, environment variables, and Docker configuration |
-| [Architecture Overview](./docs/architecture/overview.md) | System design, component diagrams, and data flow |
-| [AI Integration Guide](./AI_INTEGRATION_GUIDE.md) | Groq API and NLP orchestrator technical deep-dive |
-| [API Documentation](./SYSTEM_DOCUMENTATION.md) | REST API endpoint documentation |
-| [Contributing Guidelines](./CONTRIBUTING.md) | Branching strategy and PR workflow |
-
-<hr/>
-
-# Contributing
-
-This project is part of **GSSoC (GirlScript Summer of Code) 2026**.
-
-Contributions are welcome from everyone.
-
----
-
-## Before Opening a Pull Request
-
-| Requirement | Details |
-|---|---|
-| Read guidelines | Review `CONTRIBUTING.md` |
-| Link issue | Mention issue number |
-| Add screenshots | Required for UI changes |
-| Sync branch | Rebase with main branch |
-| Pass CI checks | Ensure lint/build/tests pass |
-
-Browse issues and filter using:
-- `good first issue`
-- `enhancement`
-- `bug`
-
-<hr/>
-
-# Contributors
-
 <br/>
 
 <a href="https://github.com/viru0909-dev/nyay-setu-working/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=viru0909-dev/nyay-setu-working" alt="Contributors" />
+  <img src="https://contrib.rocks/image?repo=viru0909-dev/nyay-setu-working&max=500&columns=15" alt="Contributors" />
 </a>
 
 <br/><br/>
 
-This chart updates automatically as contributors merge pull requests.
+This chart updates automatically as new contributors merge pull requests. Want to see your avatar here? [Pick up an issue](https://github.com/viru0909-dev/nyay-setu-working/issues) and start contributing.
 
 <hr/>
 
-# License
+## License
 
-License to be added.
-
-All rights reserved until a formal license is declared.
+License to be added. All rights reserved until a license is formally declared.
 
 <hr/>
 
 <p align="center">
   Built with purpose for a more accessible Indian Judiciary.<br/>
-  <em>Nyay Saarthi — न्याय हर किसी का अधिकार है।</em>
+  <em>Nyay Setu — न्याय हर किसी का अधिकार है।</em>
 </p>

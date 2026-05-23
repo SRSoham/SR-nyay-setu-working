@@ -82,7 +82,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
-        System.out.println("DEBUG: LOGIN ENDPOINT REACHED for email: " + req.getEmail());
+        log.debug("Login endpoint reached for email: {}", req.getEmail());
         try {
             User user1 = userRepository.findByEmail(req.getEmail())
                     .orElseThrow(() -> new RuntimeException("User not found"));
