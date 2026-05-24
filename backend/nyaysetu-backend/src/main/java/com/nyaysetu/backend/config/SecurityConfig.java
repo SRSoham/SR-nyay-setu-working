@@ -1,6 +1,7 @@
 package com.nyaysetu.backend.config;
 
 import com.nyaysetu.backend.filter.JwtAuthFilter;
+
 import com.nyaysetu.backend.filter.RateLimitFilter;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
@@ -79,75 +87,79 @@ public class SecurityConfig {
     }
 
     @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        
-        // Use origins from application.properties / Env Var
-        if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
-            java.util.List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+
+        // SAFE DEFAULT (Localhost fallback)
+        List<String> defaultOrigins = Arrays.asList(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "http://localhost"
+        );
+
+        if (allowedOrigins != null && !allowedOrigins.trim().isEmpty()) {
+            List<String> origins = Arrays.stream(allowedOrigins.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
-                    .collect(java.util.stream.Collectors.toList());
+                    .collect(Collectors.toList());
 
-            if (origins.isEmpty()) {
-                // SAFE DEFAULT: Allow local development origins only
-                configuration.setAllowedOrigins(java.util.Arrays.asList(
-                    "http://localhost:5173",
-                    "http://localhost:3000",
-                    "http://localhost"
-                ));
-                configuration.setAllowCredentials(true);
+            if (origins.contains("*")) {
+                // SECURITY: Reject bare "*" when credentials are true
+                logger.warn("CORS_ALLOWED_ORIGINS contains bare '*'. This is unsafe with credentials. Falling back to localhost defaults.");
+                configuration.setAllowedOrigins(defaultOrigins);
+            } else if (origins.stream().anyMatch(o -> o.contains("*"))) {
+                // Specific patterns like https://*.example.com are safe
+                configuration.setAllowedOriginPatterns(origins);
             } else {
-                // Security: reject bare "*" — it allows any origin to make credentialed requests
-                boolean hasBareWildcard = origins.stream().anyMatch(o -> o.trim().equals("*"));
-                if (hasBareWildcard) {
-                    java.util.logging.Logger.getLogger("SecurityConfig")
-                        .warning("CORS_ALLOWED_ORIGINS contains bare '*'. "
-                            + "This is unsafe with credentials. Falling back to localhost defaults.");
-                    configuration.setAllowedOrigins(java.util.Arrays.asList(
-                        "http://localhost:5173",
-                        "http://localhost:3000",
-                        "http://localhost"
-                    ));
-                } else {
-                    boolean hasPattern = origins.stream().anyMatch(o -> o.contains("*"));
-                    if (hasPattern) {
-                        // Specific patterns like https://*.example.com are safe with credentials
-                        configuration.setAllowedOriginPatterns(origins);
-                    } else {
-                        configuration.setAllowedOrigins(origins);
-                    }
-                }
-                configuration.setAllowCredentials(true);
+                // Exact valid domains
+                configuration.setAllowedOrigins(origins);
             }
         } else {
-            // SAFE DEFAULT: Allow local development origins only
-            configuration.setAllowedOrigins(java.util.Arrays.asList(
-                "http://localhost:5173", 
-                "http://localhost:3000", 
-                "http://localhost"
-            ));
-            configuration.setAllowCredentials(true);
+            // Fallback if environment variable is missing
+            configuration.setAllowedOrigins(defaultOrigins);
         }
-        
-        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
-        
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+
+        // SECURITY IMPROVEMENTS:
+        // 1. Always allow credentials for the resolved safe origins
+        configuration.setAllowCredentials(true);
+
+        // 2. Add "PATCH" to allowed methods
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        // 3. Restrict headers instead of using wildcard "*" for better security
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With"
+        ));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             JwtAuthFilter jwtAuthFilter) throws Exception {
 
         http
+                // 1. CORS fix (Restricting to specific origins instead of all)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
+                        // 2. Only strictly public endpoints allowed
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/forgot-password").permitAll()
+                        .requestMatchers("/api/health/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+
+                        // 3. The exact fix for the bug: Everything else MUST be authenticated
+                        .anyRequest().authenticated()
+                )
+
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
