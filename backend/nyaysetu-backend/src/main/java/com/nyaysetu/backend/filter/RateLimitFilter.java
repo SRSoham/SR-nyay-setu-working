@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Protected endpoints:
  * - /api/auth/login
  * - /api/auth/register
+ * - /api/auth/forgot-password
  */
 @Component
 @Slf4j
@@ -189,7 +190,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
      */
     private boolean isRateLimitedEndpoint(String path) {
 
-        return path.matches("^/api/auth/(login|register)$");
+        return path.matches("^/api/auth/(login|register|forgot-password)$");
     }
 
     /**

@@ -154,6 +154,11 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.deny())
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("frame-ancestors 'none';"))
+                )
                 .authorizeHttpRequests(auth -> auth
 
                         // ── Public endpoints ──────────────────────────────────────────────
