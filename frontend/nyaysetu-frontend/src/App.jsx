@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import ScrollToTop from './ScrollToTop';
 import BackToTop from './components/BackToTop';
+import ScrollProgressBar from './components/ScrollProgressBar';
 
 // PWA Components
 import OfflineIndicator from './components/OfflineIndicator';
@@ -119,25 +120,11 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return children;
 };
 
-function KeyboardAccessibilityProvider({ user }) {
-    const [showShortcuts, setShowShortcuts] = useState(false);
-
-    useKeyboardShortcuts({
-        user,
-        onOpenHelp: () => setShowShortcuts(true),
-        onCloseHelp: () => setShowShortcuts(false),
-    });
-
-    return (
-        <KeyboardShortcutsModal
-            isOpen={showShortcuts}
-            onClose={() => setShowShortcuts(false)}
-        />
-    );
-}
+import { useOfflineSync } from './hooks/useOfflineSync';
 
 function App({ swRegistration }) {
-    const { initAuth, user } = useAuthStore();
+    const { initAuth } = useAuthStore();
+    useOfflineSync();
 
     useEffect(() => {
         initAuth();
@@ -146,6 +133,7 @@ function App({ swRegistration }) {
     return (
         // CHANGED: ThemeProvider is the outermost wrapper so the theme CSS attribute
         // is set on <html> before any child renders — prevents flash of wrong theme
+        
         <ThemeProvider>
             <ErrorBoundary>
                 <LanguageProvider>
@@ -164,6 +152,7 @@ function App({ swRegistration }) {
                         <GuestOnboardingHint />
                         <ScrollToTop />
                         <BackToTop />
+                        <ScrollProgressBar />
                         <Suspense fallback={<LoadingSpinner fullScreen message="Loading NyaySetu..." />}>
                             <Routes>
                                 <Route path="/" element={<Landing />} />
